@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta para Nayumi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Dancing+Script:wght@600&display=swap');
+
+        :root {
+            --color-bg: #1a1a2e; /* Navy Blue background */
+            --color-parchment: #f4e4bc;
+            --color-parchment-dark: #dbbd89;
+            --color-crimson: #8a0303;
+            --color-gold: #d4af37;
+            --color-text: #3e2723;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--color-bg);
+            background-image: radial-gradient(circle at center, #2a2a40 0%, #111 100%);
+            font-family: 'MedievalSharp', cursive;
+            overflow: hidden;
+        }
+
+        /* Container styling */
+        .container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* The Envelope */
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-parchment-dark);
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+
+        /* Envelope Flaps */
+        .flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            z-index: 15;
+        }
+
+        /* Top Flap (The one that opens) */
+        .flap.top {
+            top: 0;
+            left: 0;
+            border-width: 100px 150px 0 150px;
+            border-color: #c7a772 transparent transparent transparent;
+            transform-origin: top;
+            transition: transform 0.6s 0.2s ease-in-out, z-index 0.2s 0.4s;
+            z-index: 20;
+        }
+
+        /* Bottom Flap (Pocket) */
+        .flap.bottom {
+            bottom: 0;
+            left: 0;
+            border-width: 0 150px 110px 150px;
+            border-color: transparent transparent var(--color-parchment) transparent;
+            z-index: 18;
+        }
+
+        /* Side Flaps */
+        .flap.left {
+            top: 0;
+            left: 0;
+            border-width: 100px 0 100px 140px;
+            border-color: transparent transparent transparent var(--color-parchment-dark);
+            z-index: 17;
+        }
+
+        .flap.right {
+            top: 0;
+            right: 0;
+            border-width: 100px 140px 100px 0;
+            border-color: transparent var(--color-parchment-dark) transparent transparent;
+            z-index: 17;
+        }
+
+        /* Wax Seal */
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #b30000, #5c0000);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 0 10px rgba(0,0,0,0.5);
+            z-index: 25;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-gold);
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid rgba(0,0,0,0.2);
+            transition: opacity 0.4s ease;
+        }
+
+        .wax-seal::after {
+            content: 'N';
+            font-family: 'MedievalSharp', serif;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+        }
+
+        /* The Letter */
+        .letter {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 95%;
+            background: #fffef0;
+            background-image: repeating-linear-gradient(#fffef0, #fffef0 24px, #e5e5e5 25px);
+            border-radius: 2px;
+            padding: 20px;
+            z-index: 16; /* Starts behind flaps */
+            transition: transform 1s 0.6s ease-in-out, height 1s 0.6s ease-in-out, z-index 0s 0.6s;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            color: var(--color-text);
+            font-size: 1.2rem;
+            line-height: 1.6;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 1s 1.2s, transform 1s 1.2s;
+            width: 100%;
+        }
+
+        .letter h1 {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--color-crimson);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--color-gold);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Button Styling */
+        .btn-open {
+            position: absolute;
+            bottom: -80px;
+            padding: 12px 30px;
+            background: linear-gradient(to bottom, #8a0303, #5c0000);
+            border: 2px solid var(--color-gold);
+            color: var(--color-gold);
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: 100;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-open:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to bottom, #a30404, #700000);
+            box-shadow: 0 0 15px var(--color-gold);
+        }
+
+        .btn-open:disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Animation States */
+        .container.open .flap.top {
+            transform: rotateX(180deg);
+            z-index: 14; /* Moves behind the letter after opening */
+        }
+
+        .container.open .wax-seal {
+            opacity: 0;
+        }
+
+        .container.open .letter {
+            transform: translateX(-50%) translateY(-60px);
+            height: 280px; /* Expands the letter */
+            z-index: 30; /* Brings letter to front */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .container.open .letter-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Ornamental Border on Letter */
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid var(--color-gold);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="envelopeContainer">
+        <div class="envelope">
+            <div class="flap top"></div>
+            <div class="flap left"></div>
+            <div class="flap right"></div>
+            <div class="flap bottom"></div>
+            <div class="wax-seal"></div>
+            
+            <div class="letter">
+                <div class="letter-content">
+                    <h1>Feliz cumpleaños, Nayumi.</h1>
+                    <p>
+                        Espero que hoy empiece un nuevo capítulo para ti, <br>
+                        que crezcas sin dejar de ser tú <br>
+                        y que este año te rete, pero también te cuide.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-open" id="openBtn">Abrir</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('openBtn');
+            const container = document.getElementById('envelopeContainer');
+
+            btn.addEventListener('click', () => {
+                // Disable button and hide it
+                btn.disabled = true;
+                
+                // Trigger animation
+                container.classList.add('open');
+            });
+        });
+    </script>
+</body>
+  </html>
+  
